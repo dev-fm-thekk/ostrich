@@ -10,6 +10,7 @@ class LastAction(BaseModel):
     type: str
     window_id: str
     element: str
+    requires_approval: bool
 
 class ActionState(BaseModel):
     id: str

@@ -1,4 +1,4 @@
-from crewai.flow.flow import Flow, listen, start
+from crewai.flow.flow import Flow, listen, start,router
 from agent.crews.code_crew.code_generator import TaskCrew, load_tools_manifest
 from crewai.experimental import ConversationState
 from crewai.experimental.conversational import ConversationConfig
@@ -58,18 +58,39 @@ class OstrichFlow(Flow[DesktopState]):
         self.state.last_action = LastAction(
             type=data.type,
             window_id=data.window_id,
-            element=data.element
+            element=data.element,
+            requires_approval=data.requires_approval
         )
+
         print(f"[State Updated] Added action '{data.type}' targeting '{data.target}' to planned_actions.")
         return data
 
-    """
-    @listen(generate_tasks)
+    @router(generate_tasks)
     def check_safety(self):
-        pass
-    """
 
-    @listen(generate_tasks)
+        action = self.state.last_action
+
+        if not action:
+            return "stop"
+
+        if action.requires_approval:
+
+            print("\n⚠️ HUMAN APPROVAL REQUIRED")
+            print(f"Action: {action.type}")
+            print(f"Element: {action.element}")
+            print(f"Window : {action.window_id}")
+
+            approval = input("Approve? (yes/no): ")
+
+            if approval.lower() == "yes":
+                return "execute"
+
+            return "stop"
+
+        # Safe action
+        return "execute"
+
+    @listen("execute")
     def execute_task(self):
         execution_log = []
 
@@ -109,6 +130,11 @@ class OstrichFlow(Flow[DesktopState]):
         self._execution_log = execution_log
         self.state.planned_actions = []   # the earlier bug fix — was self.planned_actions
         return execution_log
+    
+    @listen("stop")
+    def stop_task(self):
+
+        print("❌ Action was not executed.")
 
 def kickoff():
     """Run Ostrich flow"""

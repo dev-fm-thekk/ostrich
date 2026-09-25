@@ -20,7 +20,7 @@
     {
       "name": "switch_to_app_gnome",
       "description": "Focus/raise an already-open window. app_name must come from the gnome_windows list in the current snapshot (a wm_class), not a guessed name. Sets it as the active window for any follow-up element lookup or click.",
-      "destructive": false,
+      "destructive": true,
       "params": {
         "app_name": "string — wm_class from snapshot.gnome_windows"
       }
