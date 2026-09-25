@@ -1,16 +1,149 @@
 generate_script_task:
   description: >
-    Analyze the user command: '{text_command}' targeting OS '{target_os}'.
+    <task>
+      <command>{text_command}</command>
+      <target_os>{target_os}</target_os>
+    </task>
 
-    Available Tools Manifest:
+    <tools_registry>
     {tools_registry}
+    </tools_registry>
 
-    Selection Rules:
-    1. Inspect the provided tools manifest above and select the tool name that best handles '{text_command}'.
-    2. Set 'type' in ActionState to the exact tool name matched from the manifest.
-    3. Extract necessary arguments into the 'params' dictionary.
-    4. Set 'target' to the primary application or file target, and 'element' to any UI sub-element to be accessed(or empty string).
-    5. Set 'requires_approval' to true if the selected tool has 'destructive: true' in the manifest.
+    <ui_snapshot format="atspi+gnome_windows+active_window">
+    {snapshot}
+    </ui_snapshot>
+
+    <rules>
+    1. Determine the user's intended action from <command> and select exactly one tool from <tools_registry>.
+
+    2. APP LAUNCH:
+       If <command> asks to open, launch, start, or run an application,
+       use the launch_app tool.
+
+       For application launching, use the standard Linux executable name
+       as params.app_name.
+       Examples:
+         - "open Chrome" -> app_name: google-chrome
+         - "open Firefox" -> app_name: firefox
+         - "open VS Code" -> app_name: code
+         - "open Terminal" -> app_name: gnome-terminal
+
+       Do NOT use gnome_windows identifiers for launching an application.
+
+    3. WINDOW SWITCHING:
+       If <command> asks to switch to, focus, activate, or bring an
+       existing application/window to the foreground, use
+       switch_to_app_gnome.
+
+       Window identifiers MUST come only from the `gnome_windows` section
+       of <ui_snapshot> — the wm_class of an already-open window.
+
+       NEVER use AT-SPI element names or active_window.elements entries
+       as window-switching identifiers.
+
+    4. UI INTERACTION:
+       If <command> asks to click, select, choose, press, or otherwise
+       activate an element inside the currently active application, use
+       find_element, click_element, or click_by_name.
+
+       - Use click_by_name when the command names the element directly
+         and <ui_snapshot>.active_window.elements contains exactly one
+         clear match (params.name_hint = the element's name).
+       - Use find_element first, without clicking, only if you need to
+         enumerate candidates before deciding (e.g. before asking the
+         user to disambiguate — see rule 17).
+       - Use click_element only when you already have a match_key from a
+         find_element result earlier in this conversation.
+
+       Element identifiers MUST come only from
+       <ui_snapshot>.active_window.elements. If active_window is absent
+       from <ui_snapshot>, no application is currently active — do not
+       invent an element; prefer launch_app/switch_to_app_gnome first, or
+       ask_user if it's unclear what should be active.
+
+       Do NOT use gnome_windows identifiers as element names.
+
+    5. IMPORTANT DISTINCTION:
+       "open Chrome" / "launch Chrome" / "start Chrome" -> launch_app.
+
+       "switch to Chrome" / "focus Chrome" / "bring Chrome to front" ->
+       switch_to_app_gnome.
+
+       "click the settings button" / "choose the Work profile" ->
+       UI INTERACTION (rule 4).
+
+    6. If an application already exists in `gnome_windows`, do NOT
+       automatically switch to it when the command says "open", "launch",
+       or "start". Those commands mean launching the application via
+       launch_app regardless of whether it's already running.
+
+    7. Match <command> to exactly one tool in <tools_registry>.
+       Copy the tool's exact name into "type".
+
+    8. Fill "params" according to the matched tool's own parameter schema
+       in <tools_registry>. Do not invent parameters that are not defined
+       by that tool, and do not omit a parameter the tool requires.
+
+    9. For switch_to_app_gnome, obtain the identifier ONLY from the
+       `gnome_windows` section of <ui_snapshot>.
+
+    10. For find_element / click_element / click_by_name, obtain element
+        information ONLY from <ui_snapshot>.active_window.elements.
+
+    11. "target" = the primary application, file, window, or resource
+        being acted on.
+
+    12. "element" = the specific UI sub-element being acted on (the name
+        used in name_hint or match_key). Use "" if no specific UI element
+        applies (e.g. launch_app, switch_to_app_gnome, ask_user).
+
+    13. "requires_approval" = true iff the matched tool has
+        `destructive: true` in <tools_registry>; otherwise false.
+
+    14. For launching an application, params.app_name must be the
+        standard application executable.
+
+        Example:
+          command: "open chrome"
+          type: "launch_app"
+          params: {"app_name": "google-chrome"}
+          target: "google-chrome"
+          element: ""
+          requires_approval: false
+
+    15. Output ONLY the JSON object.
+        Do not output prose, markdown fences, explanations, or additional fields.
+
+    16. FOLLOW-UP AFTER LAUNCH/SWITCH:
+        If <ui_snapshot>.active_window is present and <command> does not
+        ask to launch or switch anything, treat <command> as acting on
+        that active window (rule 4), not as a new launch/switch.
+
+    17. DISAMBIGUATION:
+        If <ui_snapshot>.active_window.elements contains 2 or more
+        elements that look like alternatives for the same choice (e.g.
+        several buttons that look like account/profile names, tabs, or
+        similar options) and none of their names are clearly referenced
+        in <command>, do NOT guess and do NOT call click_by_name. Select
+        ask_user instead, with params.question naming the candidate
+        elements from active_window.elements verbatim so the user can
+        pick one.
+
+    18. ANSWERING A PRIOR ask_user:
+        If the previous turn asked a disambiguation question (i.e.
+        <ui_snapshot>.active_window.elements is present and unchanged)
+        and <command> now names one of those candidates — even loosely,
+        e.g. a first name or short label — treat this as the answer:
+        select click_by_name with params.name_hint = that name. Do not
+        re-launch or re-switch the application in this case.
+
+    </rules>
+
+    <output_schema>
+    {"type": "", "params": {}, "target": "", "element": "", "requires_approval": false}
+    </output_schema>
+
   expected_output: >
-    An ActionState JSON object containing type, params, target, element, and requires_approval.
+    A single ActionState JSON object conforming exactly to <output_schema>.
+
   agent: tasks_generator

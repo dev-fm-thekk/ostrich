@@ -1,117 +1,61 @@
 {
-  "version": "1.0",
+  "version": "2.0",
   "tools": [
     {
-      "name": "launch",
-      "destructive": false
+      "name": "launch_app",
+      "description": "Launch an application by its Linux executable name (e.g. google-chrome, code, gnome-terminal, firefox). Sets it as the active window for any follow-up element lookup or click.",
+      "destructive": false,
+      "params": {
+        "app_name": "string — standard Linux executable name"
+      }
     },
     {
       "name": "find_window",
-      "destructive": false
+      "description": "Search open AT-SPI applications for a loose name match, without changing focus or the active window. Use to check whether an app is already running.",
+      "destructive": false,
+      "params": {
+        "app_name": "string — loose app name to search for"
+      }
     },
     {
-      "name": "focus_window",
-      "destructive": false
+      "name": "switch_to_app_gnome",
+      "description": "Focus/raise an already-open window. app_name must come from the gnome_windows list in the current snapshot (a wm_class), not a guessed name. Sets it as the active window for any follow-up element lookup or click.",
+      "destructive": false,
+      "params": {
+        "app_name": "string — wm_class from snapshot.gnome_windows"
+      }
     },
     {
-      "name": "close_window",
-      "destructive": true
+      "name": "find_element",
+      "description": "Search the ACTIVE window's UI for elements matching a name (buttons, menu items, tabs, fields, etc). Returns ranked candidates with match_key. Requires launch_app or switch_to_app_gnome to have run first in this session.",
+      "destructive": false,
+      "params": {
+        "name_hint": "string — element name or label to search for"
+      }
     },
     {
-      "name": "click_ui_element",
-      "destructive": false
+      "name": "click_element",
+      "description": "Click a specific element previously returned by find_element, identified by its exact match_key.",
+      "destructive": false,
+      "params": {
+        "match_key": "string — match_key from a prior find_element result"
+      }
     },
     {
-      "name": "click_at",
-      "destructive": false
+      "name": "click_by_name",
+      "description": "Find-and-click in one step: locates the best-matching element in the active window by name and clicks it immediately. Use for unambiguous 'click X' commands, or to answer a prior ask_user disambiguation (e.g. user replies with a profile/account name).",
+      "destructive": false,
+      "params": {
+        "name_hint": "string — element name or label to click"
+      }
     },
     {
-      "name": "drag",
-      "destructive": false
-    },
-    {
-      "name": "scroll",
-      "destructive": false
-    },
-    {
-      "name": "type_text",
-      "destructive": false
-    },
-    {
-      "name": "press_key",
-      "destructive": false
-    },
-    {
-      "name": "hotkey",
-      "destructive": false
-    },
-    {
-      "name": "wait_for_window",
-      "destructive": false
-    },
-    {
-      "name": "wait_for_element",
-      "destructive": false
-    },
-    {
-      "name": "wait",
-      "destructive": false
-    },
-    {
-      "name": "read_screen",
-      "destructive": false
-    },
-    {
-      "name": "inspect_ui",
-      "destructive": false
-    },
-    {
-      "name": "select_file",
-      "destructive": false
-    },
-    {
-      "name": "execute_shell",
-      "destructive": true
-    },
-    {
-      "name": "delete_file",
-      "destructive": true
-    },
-    {
-      "name": "delete_directory",
-      "destructive": true
-    },
-    {
-      "name": "create_file",
-      "destructive": false
-    },
-    {
-      "name": "write_file",
-      "destructive": false
-    },
-    {
-      "name": "move_file",
-      "destructive": true
-    },
-    {
-      "name": "copy_file",
-      "destructive": false
-    },
-    {
-      "name": "install_software",
-      "destructive": true
-    },
-    {
-      "name": "modify_system_settings",
-      "destructive": true
-    },
-    {
-      "name": "shutdown_system",
-      "destructive": true
-    },
-    {
-      "name": "reboot_system",
-      "destructive": true
+      "name": "ask_user",
+      "description": "Ask the user a clarifying question instead of acting, when the active window's elements present multiple plausible targets (e.g. several profile/account buttons) and the command didn't specify which one. Does not touch the UI.",
+      "destructive": false,
+      "params": {
+        "question": "string — short question naming the candidate elements"
+      }
     }
   ]
 }

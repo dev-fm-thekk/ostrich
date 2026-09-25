@@ -16,8 +16,9 @@ def load_tools_manifest() -> str:
     return "[]"
 
 llm = LLM(
-    model="gemini/gemini-3.5-flash",          # "openai/" prefix = OpenAI-compatible route; the name after it is arbitrary
-    api_key=os.environ["GEMINI_API_KEY"],          # must be non-empty, llama.cpp ignores it
+    model="openai/gemma",
+    api_base="http://10.10.2.229:8080/v1",
+    api_key="anything",
     temperature=0.4
 )
 

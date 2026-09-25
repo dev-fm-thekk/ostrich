@@ -2,10 +2,9 @@ from pydantic import BaseModel
 
 class Window(BaseModel):
     id: str
-    app: str
-    handle: str
-    title: str
-    status: str
+    app_name: str
+    wm_string: str
+    
 
 class LastAction(BaseModel):
     type: str
@@ -15,7 +14,7 @@ class LastAction(BaseModel):
 class ActionState(BaseModel):
     id: str
     type: str
-    params: dict
+    params: list[str]
     target: str
     element: str
     window_id: str
