@@ -1,0 +1,117 @@
+{
+  "version": "1.0",
+  "tools": [
+    {
+      "name": "launch",
+      "destructive": false
+    },
+    {
+      "name": "find_window",
+      "destructive": false
+    },
+    {
+      "name": "focus_window",
+      "destructive": false
+    },
+    {
+      "name": "close_window",
+      "destructive": true
+    },
+    {
+      "name": "click_ui_element",
+      "destructive": false
+    },
+    {
+      "name": "click_at",
+      "destructive": false
+    },
+    {
+      "name": "drag",
+      "destructive": false
+    },
+    {
+      "name": "scroll",
+      "destructive": false
+    },
+    {
+      "name": "type_text",
+      "destructive": false
+    },
+    {
+      "name": "press_key",
+      "destructive": false
+    },
+    {
+      "name": "hotkey",
+      "destructive": false
+    },
+    {
+      "name": "wait_for_window",
+      "destructive": false
+    },
+    {
+      "name": "wait_for_element",
+      "destructive": false
+    },
+    {
+      "name": "wait",
+      "destructive": false
+    },
+    {
+      "name": "read_screen",
+      "destructive": false
+    },
+    {
+      "name": "inspect_ui",
+      "destructive": false
+    },
+    {
+      "name": "select_file",
+      "destructive": false
+    },
+    {
+      "name": "execute_shell",
+      "destructive": true
+    },
+    {
+      "name": "delete_file",
+      "destructive": true
+    },
+    {
+      "name": "delete_directory",
+      "destructive": true
+    },
+    {
+      "name": "create_file",
+      "destructive": false
+    },
+    {
+      "name": "write_file",
+      "destructive": false
+    },
+    {
+      "name": "move_file",
+      "destructive": true
+    },
+    {
+      "name": "copy_file",
+      "destructive": false
+    },
+    {
+      "name": "install_software",
+      "destructive": true
+    },
+    {
+      "name": "modify_system_settings",
+      "destructive": true
+    },
+    {
+      "name": "shutdown_system",
+      "destructive": true
+    },
+    {
+      "name": "reboot_system",
+      "destructive": true
+    }
+  ]
+}

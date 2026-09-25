@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from crewai.flow.flow import Flow, listen, start
-from agent.crews.code_crew.code_generator import CodeCrew
+from agent.crews.code_crew.code_generator import TaskCrew, load_tools_manifest
 from crewai.experimental import ConversationState
 from crewai.experimental.conversational import ConversationConfig
 from agent.core.shared import Window, LastAction, ActionState
@@ -17,10 +17,10 @@ mlflow.crewai.autolog()
 
 class DesktopState(ConversationState):
     os: str = ""
-    windows: Window
-    active_window: str
-    last_action: LastAction
-    planned_actions: list[ActionState]
+    windows: Window = {}
+    active_window: str = ""
+    last_action: LastAction = {}
+    planned_actions: list[ActionState] = {}
 
    
 @ConversationConfig(defer_trace_finalization=True)
@@ -39,7 +39,26 @@ class OstrichFlow(Flow[DesktopState]):
     @listen(platform_setup)
     def generate_tasks(self):
         """Generate tasks and update the action items"""
-        pass
+        command = input("Enter command to perform: ")
+        tool_registry = load_tools_manifest()
+
+        result = TaskCrew().crew().kickoff(
+            inputs={
+                'text_command': command,
+                'target_os':self.state.os,
+                'tools_registry': tool_registry
+            }
+        )
+        data : ActionState = result.pydantic
+        self.state.planned_actions.append(data)
+
+        self.state.last_action = LastAction(
+            type=data.type,
+            window_id=data.window_id,
+            element=data.element
+        )
+        print(f"[State Updated] Added action '{data.type}' targeting '{data.target}' to planned_actions.")
+        return data
     
     """
     @listen(generate_tasks)
@@ -47,21 +66,20 @@ class OstrichFlow(Flow[DesktopState]):
         pass
     """
 
-    @listen(generate_code)
+    """@listen(generate_code)
     def execute_task(self):
-        """Executes code in a subprocess"""
         pass
 
     @listen(execute_task)
     def update_state(self):
-        """Update the ui-state"""
         pass
+    """
         
         
 def kickoff():
     """Run Ostrich flow"""
-    flow = OstrichFlow()
-    flow.chat()
+    OstrichFlow().kickoff()
+
 
 if __name__ == "__main__":
     kickoff()
