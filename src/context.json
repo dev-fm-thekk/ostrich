@@ -1,0 +1,110 @@
+{
+  "_comment": "Windows executable naming context. Maps human/model-supplied names to the exact Windows executable name. Keys are lowercase aliases; values are the canonical Windows executable (no .exe needed for subprocess).",
+  "app_aliases": {
+    "chrome":           "chrome",
+    "google chrome":    "chrome",
+    "google-chrome":    "chrome",
+    "chrome.exe":       "chrome",
+
+    "firefox":          "firefox",
+    "mozilla firefox":  "firefox",
+    "firefox.exe":      "firefox",
+
+    "edge":             "msedge",
+    "microsoft edge":   "msedge",
+    "msedge":           "msedge",
+    "msedge.exe":       "msedge",
+
+    "notepad":          "notepad",
+    "notepad.exe":      "notepad",
+    "text editor":      "notepad",
+
+    "notepad++":        "notepad++",
+    "npp":              "notepad++",
+
+    "calculator":       "calc",
+    "calc":             "calc",
+    "calc.exe":         "calc",
+
+    "explorer":         "explorer",
+    "file explorer":    "explorer",
+    "windows explorer": "explorer",
+    "explorer.exe":     "explorer",
+
+    "paint":            "mspaint",
+    "mspaint":          "mspaint",
+    "mspaint.exe":      "mspaint",
+
+    "word":             "WINWORD",
+    "microsoft word":   "WINWORD",
+    "winword":          "WINWORD",
+    "winword.exe":      "WINWORD",
+
+    "excel":            "EXCEL",
+    "microsoft excel":  "EXCEL",
+    "excel.exe":        "EXCEL",
+
+    "powerpoint":       "POWERPNT",
+    "microsoft powerpoint": "POWERPNT",
+    "powerpnt":         "POWERPNT",
+    "powerpnt.exe":     "POWERPNT",
+
+    "outlook":          "OUTLOOK",
+    "microsoft outlook":"OUTLOOK",
+    "outlook.exe":      "OUTLOOK",
+
+    "teams":            "ms-teams",
+    "microsoft teams":  "ms-teams",
+    "ms teams":         "ms-teams",
+
+    "vscode":           "code",
+    "vs code":          "code",
+    "visual studio code":"code",
+    "code":             "code",
+    "code.exe":         "code",
+
+    "cmd":              "cmd",
+    "command prompt":   "cmd",
+    "cmd.exe":          "cmd",
+
+    "powershell":       "powershell",
+    "pwsh":             "pwsh",
+    "windows terminal": "wt",
+    "wt":               "wt",
+
+    "task manager":     "taskmgr",
+    "taskmgr":          "taskmgr",
+    "taskmgr.exe":      "taskmgr",
+
+    "control panel":    "control",
+    "control":          "control",
+
+    "settings":         "ms-settings:",
+    "windows settings": "ms-settings:",
+
+    "snipping tool":    "SnippingTool",
+    "snippingtool":     "SnippingTool",
+    "snip":             "SnippingTool",
+
+    "wordpad":          "wordpad",
+    "wordpad.exe":      "wordpad",
+
+    "spotify":          "spotify",
+    "spotify.exe":      "spotify",
+
+    "slack":            "slack",
+    "slack.exe":        "slack",
+
+    "zoom":             "zoom",
+    "zoom.exe":         "zoom"
+  },
+
+  "path_conventions": {
+    "separator":        "\\",
+    "drive_format":     "C:\\",
+    "case_sensitive":   false,
+    "max_path_length":  260,
+    "forbidden_chars":  ["<", ">", ":", "\"", "/", "|", "?", "*"],
+    "reserved_names":   ["CON","PRN","AUX","NUL","COM1","COM2","COM3","COM4","COM5","COM6","COM7","COM8","COM9","LPT1","LPT2","LPT3","LPT4","LPT5","LPT6","LPT7","LPT8","LPT9"]
+  }
+}
