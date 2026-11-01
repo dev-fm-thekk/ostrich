@@ -1,4 +1,4 @@
-from ostrich.tools.ui_tools.base import (
+from modules.tools.window.base import (
     DesktopNavigator,
     WindowsDesktopNavigator,
     LinuxDesktopNavigator,

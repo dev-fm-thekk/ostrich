@@ -137,11 +137,11 @@ class SystemNavigator(ABC):
 
 # Platform-specific implementations
 try:
-    from ostrich.tools.system_tools.windows import WindowsSystemNavigator
-    from ostrich.tools.system_tools.linux import LinuxSystemNavigator
+    from modules.tools.system.windows import WindowsSystemNavigator
+    from modules.tools.system.linux import LinuxSystemNavigator
 except ImportError:
-    from ostrich.tools.system_tools.windows import WindowsSystemNavigator
-    from ostrich.tools.system_tools.linux import LinuxSystemNavigator
+    from modules.tools.system.windows import WindowsSystemNavigator
+    from modules.tools.system.linux import LinuxSystemNavigator
 
 
 _system_navigator_instance: SystemNavigator | None = None

@@ -1,4 +1,4 @@
-from ostrich.tools.file_tools.base import (
+from modules.tools.file.base import (
     FileNavigator,
     WindowsFileNavigator,
     LinuxFileNavigator,

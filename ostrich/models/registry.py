@@ -1,6 +1,6 @@
 import needle
 
-from ostrich.tools.ui_tools import (
+from modules.tools.window import (
     open_app,
     list_windows,
     switch_window,
@@ -14,7 +14,7 @@ from ostrich.tools.mouse_tools import (
     mouse_double_click,
     mouse_select,
 )
-from ostrich.tools.system_tools import (
+from modules.tools.system import (
     get_system_info,
     get_volume,
     set_volume,

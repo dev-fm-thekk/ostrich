@@ -21,9 +21,9 @@ import shutil
 import subprocess
 
 try:
-    from ostrich.tools.system_tools.base import SystemNavigator
+    from modules.tools.system.base import SystemNavigator
 except ImportError:
-    from ostrich.tools.system_tools.base import SystemNavigator
+    from modules.tools.system.base import SystemNavigator
 
 
 class WindowsSystemNavigator(SystemNavigator):

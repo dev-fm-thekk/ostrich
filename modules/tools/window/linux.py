@@ -14,9 +14,9 @@ import shutil
 import subprocess
 
 try:
-    from ostrich.tools.ui_tools.base import DesktopNavigator
+    from modules.tools.window.base import DesktopNavigator
 except ImportError:
-    from ostrich.tools.ui_tools.base import DesktopNavigator
+    from modules.tools.window.base import DesktopNavigator
 
 # Common Linux app alias mapping
 _LINUX_APP_ALIASES: dict[str, str] = {

@@ -1,4 +1,4 @@
-from ostrich.tools.system_tools.base import (
+from modules.tools.system.base import (
     SystemNavigator,
     WindowsSystemNavigator,
     LinuxSystemNavigator,

@@ -20,7 +20,7 @@ import needle
 from gi.repository import Atspi
 from pydantic import BaseModel
 
-from ostrich.tools.ui_tools import (
+from modules.tools.window import (
     open_app,
     list_windows,
     switch_window,

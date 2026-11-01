@@ -21,11 +21,11 @@ class FileNavigator(ABC):
 
 
 try:
-    from ostrich.tools.file_tools.windows import WindowsFileNavigator
-    from ostrich.tools.file_tools.linux import LinuxFileNavigator
+    from modules.tools.file.windows import WindowsFileNavigator
+    from modules.tools.file.linux import LinuxFileNavigator
 except ImportError:
-    from ostrich.tools.file_tools.windows import WindowsFileNavigator
-    from ostrich.tools.file_tools.linux import LinuxFileNavigator
+    from modules.tools.file.windows import WindowsFileNavigator
+    from modules.tools.file.linux import LinuxFileNavigator
 
 
 _file_navigator_instance: FileNavigator | None = None

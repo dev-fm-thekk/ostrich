@@ -84,11 +84,11 @@ class DesktopNavigator(ABC):
 
 # Platform-specific navigators
 try:
-    from ostrich.tools.ui_tools.windows import WindowsDesktopNavigator
-    from ostrich.tools.ui_tools.linux import LinuxDesktopNavigator
+    from modules.tools.window.windows import WindowsDesktopNavigator
+    from modules.tools.window.linux import LinuxDesktopNavigator
 except ImportError:
-    from ostrich.tools.ui_tools.windows import WindowsDesktopNavigator
-    from ostrich.tools.ui_tools.linux import LinuxDesktopNavigator
+    from modules.tools.window.windows import WindowsDesktopNavigator
+    from modules.tools.window.linux import LinuxDesktopNavigator
 
 
 # ===========================================================================

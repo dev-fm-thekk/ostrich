@@ -10,9 +10,9 @@ import json
 import subprocess
 
 try:
-    from ostrich.tools.ui_tools.base import DesktopNavigator
+    from modules.tools.window.base import DesktopNavigator
 except ImportError:
-    from ostrich.tools.ui_tools.base import DesktopNavigator
+    from modules.tools.window.base import DesktopNavigator
 
 # Import app naming context resolution
 try:

@@ -1,4 +1,4 @@
-from ostrich.tools.system_tools import (
+from modules.tools.system import (
     get_system_info,
     get_volume,
     set_volume,

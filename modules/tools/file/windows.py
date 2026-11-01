@@ -9,9 +9,9 @@ from __future__ import annotations
 import os
 
 try:
-    from ostrich.tools.file_tools.base import FileNavigator
+    from modules.tools.file.base import FileNavigator
 except ImportError:
-    from ostrich.tools.file_tools.base import FileNavigator
+    from modules.tools.file.base import FileNavigator
 
 
 class WindowsFileNavigator(FileNavigator):

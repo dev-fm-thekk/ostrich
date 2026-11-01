@@ -10,7 +10,7 @@ Delegates to modular subpackages:
 - file_tools: Filesystem interaction (Windows / Linux)
 """
 
-from ostrich.tools.ui_tools import (
+from modules.tools.window import (
     DesktopNavigator,
     WindowsDesktopNavigator,
     LinuxDesktopNavigator,
@@ -38,7 +38,7 @@ from ostrich.tools.keyboard_tools import (
     LinuxKeyboardNavigator,
     get_keyboard_navigator,
 )
-from ostrich.tools.system_tools import (
+from modules.tools.system import (
     SystemNavigator,
     WindowsSystemNavigator,
     LinuxSystemNavigator,
@@ -60,7 +60,7 @@ from ostrich.tools.system_tools import (
     get_battery_status,
     lock_screen,
 )
-from ostrich.tools.file_tools import (
+from modules.tools.file import (
     FileNavigator,
     WindowsFileNavigator,
     LinuxFileNavigator,
