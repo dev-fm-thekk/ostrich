@@ -20,10 +20,7 @@ import re
 import shutil
 import subprocess
 
-try:
-    from modules.tools.system.base import SystemNavigator
-except ImportError:
-    from modules.tools.system.base import SystemNavigator
+from modules.tools.system.base import SystemNavigator
 
 
 class WindowsSystemNavigator(SystemNavigator):

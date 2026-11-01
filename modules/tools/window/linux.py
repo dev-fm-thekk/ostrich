@@ -13,10 +13,7 @@ import re
 import shutil
 import subprocess
 
-try:
-    from modules.tools.window.base import DesktopNavigator
-except ImportError:
-    from modules.tools.window.base import DesktopNavigator
+from modules.tools.window.base import DesktopNavigator
 
 # Common Linux app alias mapping
 _LINUX_APP_ALIASES: dict[str, str] = {

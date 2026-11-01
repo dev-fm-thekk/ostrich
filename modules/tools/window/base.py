@@ -20,11 +20,8 @@ except ImportError:
 try:
     from ostrich.context.app_aliases import resolve_app_name
 except ImportError:
-    try:
-        from ostrich.context.app_aliases import resolve_app_name
-    except ImportError:
-        def resolve_app_name(raw: str) -> str:
-            return raw
+    def resolve_app_name(raw: str) -> str:
+        return raw
 
 
 # ===========================================================================
@@ -85,10 +82,13 @@ class DesktopNavigator(ABC):
 # Platform-specific navigators
 try:
     from modules.tools.window.windows import WindowsDesktopNavigator
+except ImportError:
+    WindowsDesktopNavigator = None  # type: ignore
+
+try:
     from modules.tools.window.linux import LinuxDesktopNavigator
 except ImportError:
-    from modules.tools.window.windows import WindowsDesktopNavigator
-    from modules.tools.window.linux import LinuxDesktopNavigator
+    LinuxDesktopNavigator = None  # type: ignore
 
 
 # ===========================================================================
@@ -103,8 +103,12 @@ def get_desktop_navigator() -> DesktopNavigator:
     global _navigator_instance
     if _navigator_instance is None:
         if platform.system().lower() == "windows":
+            if WindowsDesktopNavigator is None:
+                raise NotImplementedError("Windows Desktop navigator is not available.")
             _navigator_instance = WindowsDesktopNavigator()
         else:
+            if LinuxDesktopNavigator is None:
+                raise NotImplementedError("Linux Desktop navigator is not available.")
             _navigator_instance = LinuxDesktopNavigator()
     return _navigator_instance
 

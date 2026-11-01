@@ -1,8 +1,9 @@
 """
-Linux Mouse Navigator
-=====================
-Implementation of MouseNavigator for Linux using evdev / uinput
-with smooth gliding and safety release handling (based on test/mouse_test.py).
+Linux IO Navigator
+==================
+Implementation of IONavigator for Linux combining:
+- Mouse interaction using evdev / uinput with smooth gliding and safety release
+- Keyboard interaction using ydotool
 """
 
 from __future__ import annotations
@@ -10,23 +11,28 @@ from __future__ import annotations
 import re
 import subprocess
 import time
+from typing import Any
+
+from modules.tools.io.base import IONavigator, KeyboardNavigator, MouseNavigator
 
 try:
-    from ostrich.tools.mouse_tools.base import MouseNavigator
+    from evdev import AbsInfo, UInput, ecodes as e
+    _HAS_EVDEV = True
 except ImportError:
-    from ostrich.tools.mouse_tools.base import MouseNavigator
-
-from evdev import AbsInfo, UInput, ecodes as e
+    _HAS_EVDEV = False
 
 
-class LinuxMouseNavigator(MouseNavigator):
-    """Linux implementation of MouseNavigator using evdev / uinput."""
+class LinuxIONavigator(IONavigator):
+    """Linux implementation of IONavigator combining mouse and keyboard capabilities."""
 
     def __init__(self, screen_size: tuple[int, int] | None = None) -> None:
         self._screen_size = screen_size
-        self._ui: UInput | None = None
+        self._ui: Any = None
         self._cur_pos: tuple[int, int] = (500, 500)
 
+    # -----------------------------------------------------------------------
+    # Mouse helper methods
+    # -----------------------------------------------------------------------
     def _get_screen_size(self) -> tuple[int, int]:
         """Fetch screen dimensions via gdbus or xrandr with 1920x1080 default."""
         if self._screen_size:
@@ -86,8 +92,11 @@ class LinuxMouseNavigator(MouseNavigator):
             pass
         return self._cur_pos
 
-    def _get_device(self) -> UInput:
+    def _get_device(self) -> Any:
         """Create or return reusable virtual UInput device."""
+        if not _HAS_EVDEV:
+            raise RuntimeError("evdev is not installed or available on this system.")
+
         if self._ui is None:
             w, h = self._get_screen_size()
             cap = {
@@ -98,19 +107,18 @@ class LinuxMouseNavigator(MouseNavigator):
                 ],
             }
             self._ui = UInput(cap, name="agent-mouse")
-            time.sleep(0.5)  # Let the desktop register the new device
+            time.sleep(0.1)
         return self._ui
 
-    def _move_raw(self, ui: UInput, x: float, y: float) -> None:
+    def _move_raw(self, ui: Any, x: float, y: float) -> None:
         ui.write(e.EV_ABS, e.ABS_X, int(x))
         ui.write(e.EV_ABS, e.ABS_Y, int(y))
         ui.syn()
 
-    def _glide(self, ui: UInput, x0: float, y0: float, x1: float, y1: float, steps: int = 25, delay: float = 0.008) -> None:
-        """Move in small steps so users and apps see a realistic smooth glide."""
+    def _glide(self, ui: Any, x0: float, y0: float, x1: float, y1: float, steps: int = 25, delay: float = 0.008) -> None:
+        """Interpolate movement between two coordinates smoothly."""
         for i in range(1, steps + 1):
             t = i / steps
-            # Smooth ease-in ease-out curve
             smooth_t = t * t * (3 - 2 * t)
             self._move_raw(ui, x0 + (x1 - x0) * smooth_t, y0 + (y1 - y0) * smooth_t)
             time.sleep(delay)
@@ -123,6 +131,9 @@ class LinuxMouseNavigator(MouseNavigator):
             return e.BTN_MIDDLE
         return e.BTN_LEFT
 
+    # -----------------------------------------------------------------------
+    # MouseNavigator implementation
+    # -----------------------------------------------------------------------
     def move(self, x: int, y: int, smooth: bool = True) -> dict:
         """Move mouse cursor to coordinates (x, y) with smooth gliding."""
         try:
@@ -141,8 +152,12 @@ class LinuxMouseNavigator(MouseNavigator):
 
     def click(self, x: int | None = None, y: int | None = None, button: str = "left", smooth: bool = True) -> dict:
         """Perform a visible mouse click."""
-        btn_key = self._btn_code(button)
-        ui = self._get_device()
+        try:
+            btn_key = self._btn_code(button)
+            ui = self._get_device()
+        except Exception as exc:
+            return {"success": False, "message": f"Failed to initialize mouse device: {exc}"}
+
         pressed = False
         try:
             if x is not None and y is not None:
@@ -152,7 +167,7 @@ class LinuxMouseNavigator(MouseNavigator):
             ui.write(e.EV_KEY, btn_key, 1)
             ui.syn()
             pressed = True
-            time.sleep(0.08)  # Visible button depression duration
+            time.sleep(0.08)
 
             ui.write(e.EV_KEY, btn_key, 0)
             ui.syn()
@@ -169,8 +184,12 @@ class LinuxMouseNavigator(MouseNavigator):
 
     def double_click(self, x: int | None = None, y: int | None = None, button: str = "left", smooth: bool = True) -> dict:
         """Perform a visible double click."""
-        btn_key = self._btn_code(button)
-        ui = self._get_device()
+        try:
+            btn_key = self._btn_code(button)
+            ui = self._get_device()
+        except Exception as exc:
+            return {"success": False, "message": f"Failed to initialize mouse device: {exc}"}
+
         pressed = False
         try:
             if x is not None and y is not None:
@@ -208,20 +227,21 @@ class LinuxMouseNavigator(MouseNavigator):
 
     def select(self, start_x: int, start_y: int, end_x: int, end_y: int, steps: int = 40) -> dict:
         """Drag-select a rectangle on screen using glide movements."""
-        ui = self._get_device()
+        try:
+            ui = self._get_device()
+        except Exception as exc:
+            return {"success": False, "message": f"Failed to initialize mouse device: {exc}"}
+
         pressed = False
         try:
-            # 1. Move to start position
             self.move(start_x, start_y, smooth=True)
             time.sleep(0.1)
 
-            # 2. Press left button
             ui.write(e.EV_KEY, e.BTN_LEFT, 1)
             ui.syn()
             pressed = True
             time.sleep(0.1)
 
-            # 3. Smooth glide to end position
             self._glide(ui, start_x, start_y, end_x, end_y, steps=steps, delay=0.01)
             time.sleep(0.15)
 
@@ -238,3 +258,73 @@ class LinuxMouseNavigator(MouseNavigator):
             if pressed:
                 ui.write(e.EV_KEY, e.BTN_LEFT, 0)
                 ui.syn()
+
+    # -----------------------------------------------------------------------
+    # KeyboardNavigator implementation
+    # -----------------------------------------------------------------------
+    def _execute_keyboard(self, *args: str) -> dict:
+        """Execute a keyboard action via ydotool."""
+        try:
+            result = subprocess.run(
+                ["ydotool", *args],
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=10,
+            )
+            return {
+                "success": True,
+                "message": result.stdout.strip() or "Keyboard action executed",
+            }
+        except subprocess.TimeoutExpired:
+            return {
+                "success": False,
+                "message": "Keyboard action timed out",
+            }
+        except subprocess.CalledProcessError as e_err:
+            return {
+                "success": False,
+                "message": e_err.stderr.strip() or str(e_err),
+            }
+        except FileNotFoundError:
+            return {
+                "success": False,
+                "message": "ydotool is not installed or not in PATH",
+            }
+        except Exception as exc:
+            return {
+                "success": False,
+                "message": str(exc),
+            }
+
+    def type_text(self, text: str) -> dict:
+        """Type text into the currently focused application."""
+        result = self._execute_keyboard("type", "--", text)
+        if result["success"]:
+            result["message"] = f"Typed text: {text}"
+        return result
+
+    def press_key(self, key: str) -> dict:
+        """Press a single key."""
+        result = self._execute_keyboard("key", key)
+        if result["success"]:
+            result["message"] = f"Pressed key: {key}"
+        return result
+
+    def hotkey(self, *keys: str) -> dict:
+        """Press a keyboard combination."""
+        if not keys:
+            return {
+                "success": False,
+                "message": "No keys provided",
+            }
+        key_combination = "+".join(keys)
+        result = self._execute_keyboard("key", key_combination)
+        if result["success"]:
+            result["message"] = f"Pressed hotkey: {key_combination}"
+        return result
+
+
+# Aliases for backwards compatibility and specific role typing
+LinuxMouseNavigator = LinuxIONavigator
+LinuxKeyboardNavigator = LinuxIONavigator

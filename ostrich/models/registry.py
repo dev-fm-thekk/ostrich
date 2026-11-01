@@ -8,7 +8,7 @@ from modules.tools.window import (
     minimize_window,
     split_screen,
 )
-from ostrich.tools.mouse_tools import (
+from modules.tools.io import (
     mouse_move,
     mouse_click,
     mouse_double_click,

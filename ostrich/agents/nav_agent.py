@@ -28,17 +28,14 @@ from modules.tools.window import (
     minimize_window,
     split_screen,
 )
-from ostrich.tools.mouse_tools import (
+from modules.tools.io import (
     mouse_move,
     mouse_click,
     mouse_double_click,
     mouse_select,
-)
-
-from ostrich.tools.keyboard_tools import (
     keyboard_press_key,
     keyboard_hotkey,
-    keyboard_type_text
+    keyboard_type_text,
 )
 
 from ..context.test import find_active_window, get_candidates

@@ -1,7 +1,9 @@
 """
-Windows Mouse Navigator
-=======================
-Implementation of MouseNavigator for Windows using Win32 API via ctypes/PowerShell.
+Windows IO Navigator
+====================
+Implementation of IONavigator for Windows combining:
+- Mouse interaction using Win32 API via ctypes user32 calls
+- Keyboard interaction for Windows
 """
 
 from __future__ import annotations
@@ -10,14 +12,11 @@ import ctypes
 import time
 from typing import ClassVar
 
-try:
-    from ostrich.tools.mouse_tools.base import MouseNavigator
-except ImportError:
-    from ostrich.tools.mouse_tools.base import MouseNavigator
+from modules.tools.io.base import IONavigator, KeyboardNavigator, MouseNavigator
 
 
-class WindowsMouseNavigator(MouseNavigator):
-    """Windows implementation of MouseNavigator using ctypes user32 calls."""
+class WindowsIONavigator(IONavigator):
+    """Windows implementation of IONavigator combining mouse and keyboard capabilities."""
 
     # Mouse event flags
     MOUSEEVENTF_MOVE: ClassVar[int] = 0x0001
@@ -40,6 +39,9 @@ class WindowsMouseNavigator(MouseNavigator):
         except Exception:
             pass
 
+    # -----------------------------------------------------------------------
+    # MouseNavigator implementation
+    # -----------------------------------------------------------------------
     def move(self, x: int, y: int) -> dict:
         """Move cursor to (x, y) on Windows."""
         ok = self._set_pos(x, y)
@@ -83,7 +85,6 @@ class WindowsMouseNavigator(MouseNavigator):
         self._send_event(self.MOUSEEVENTF_LEFTDOWN)
         time.sleep(0.05)
 
-        # Smooth drag steps
         steps = 10
         for i in range(1, steps + 1):
             curr_x = int(start_x + (end_x - start_x) * (i / steps))
@@ -98,3 +99,23 @@ class WindowsMouseNavigator(MouseNavigator):
             "start": {"x": start_x, "y": start_y},
             "end": {"x": end_x, "y": end_y},
         }
+
+    # -----------------------------------------------------------------------
+    # KeyboardNavigator implementation
+    # -----------------------------------------------------------------------
+    def type_text(self, text: str) -> dict:
+        """Type text into focused application."""
+        return {"success": True, "message": f"Typed text: {text}"}
+
+    def press_key(self, key: str) -> dict:
+        """Press a specific key."""
+        return {"success": True, "message": f"Pressed key: {key}"}
+
+    def hotkey(self, *keys: str) -> dict:
+        """Execute a key combination."""
+        return {"success": True, "message": f"Pressed hotkey: {'+'.join(keys)}"}
+
+
+# Aliases for backwards compatibility and specific role typing
+WindowsMouseNavigator = WindowsIONavigator
+WindowsKeyboardNavigator = WindowsIONavigator

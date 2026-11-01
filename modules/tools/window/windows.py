@@ -9,20 +9,14 @@ from __future__ import annotations
 import json
 import subprocess
 
-try:
-    from modules.tools.window.base import DesktopNavigator
-except ImportError:
-    from modules.tools.window.base import DesktopNavigator
+from modules.tools.window.base import DesktopNavigator
 
 # Import app naming context resolution
 try:
     from ostrich.context.app_aliases import resolve_app_name
 except ImportError:
-    try:
-        from ostrich.context.app_aliases import resolve_app_name
-    except ImportError:
-        def resolve_app_name(raw: str) -> str:
-            return raw
+    def resolve_app_name(raw: str) -> str:
+        return raw
 
 
 # Inline C# types loaded into PowerShell for Win32 API calls

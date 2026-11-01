@@ -8,16 +8,13 @@ from __future__ import annotations
 
 import os
 
-try:
-    from modules.tools.file.base import FileNavigator
-except ImportError:
-    from modules.tools.file.base import FileNavigator
+from modules.tools.file.base import FileNavigator
 
 
 class LinuxFileNavigator(FileNavigator):
     """Linux implementation of FileNavigator."""
 
-    def list_files(self, path: str) -> dict:
+    def list_files(self, path: str = ".") -> dict:
         try:
             files = os.listdir(path)
             return {"success": True, "files": files}

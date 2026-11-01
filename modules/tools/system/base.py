@@ -138,10 +138,13 @@ class SystemNavigator(ABC):
 # Platform-specific implementations
 try:
     from modules.tools.system.windows import WindowsSystemNavigator
+except ImportError:
+    WindowsSystemNavigator = None  # type: ignore
+
+try:
     from modules.tools.system.linux import LinuxSystemNavigator
 except ImportError:
-    from modules.tools.system.windows import WindowsSystemNavigator
-    from modules.tools.system.linux import LinuxSystemNavigator
+    LinuxSystemNavigator = None  # type: ignore
 
 
 _system_navigator_instance: SystemNavigator | None = None
@@ -152,8 +155,12 @@ def get_system_navigator() -> SystemNavigator:
     global _system_navigator_instance
     if _system_navigator_instance is None:
         if platform.system().lower() == "windows":
+            if WindowsSystemNavigator is None:
+                raise NotImplementedError("Windows System navigator is not available.")
             _system_navigator_instance = WindowsSystemNavigator()
         else:
+            if LinuxSystemNavigator is None:
+                raise NotImplementedError("Linux System navigator is not available.")
             _system_navigator_instance = LinuxSystemNavigator()
     return _system_navigator_instance
 
