@@ -1,18 +1,16 @@
-
 ================================================================================
-OSTRICHFLOW DEMO SUMMARY
+OSTRICH REAL WORKFLOW UI-NAVIGATION TEST SUMMARY
 ================================================================================
-01. PASS      'create a new tab'                            tab count increases by one | before={'count': 2, 'selected': 1} | after={'count': 3, 'selected': 3} [22.11s]
-02. PASS      'switch to the first terminal tab'            first tab selected | before={'count': 3, 'selected': 3} | after={'count': 3, 'selected': 1} [18.84s]
-03. PASS      'switch to the second terminal tab'           second tab selected | before={'count': 3, 'selected': 1} | after={'count': 3, 'selected': 2} [18.15s]
-04. PASS      'create a new tab'                            tab count increases by one | before={'count': 3, 'selected': 2} | after={'count': 4, 'selected': 4} [18.43s]
-05. PASS      'switch to the third terminal tab'            third tab selected | before={'count': 4, 'selected': 4} | after={'count': 4, 'selected': 3} [25.84s]
-06. PASS      'switch to the first terminal tab'            back on tab 1 | before={'count': 4, 'selected': 3} | after={'count': 4, 'selected': 1} [23.18s]
-07. NOCHECK   'minimize this terminal window'               Could not capture UI state [24.24s]
-
+01. PASS   'open terminal'                               Validation check passed [3.31s]
+02. PASS   'switch window terminal'                      Validation check passed [3.32s]
+03. PASS   'type text cd Documents/projects'             Validation check passed [4.02s]
+04. PASS   'press enter'                                 Validation check passed [3.70s]
+05. PASS   'type text mkdir -p test_project'             Validation check passed [4.10s]
+06. PASS   'press enter'                                 Validation check passed [3.71s]
+07. PASS   'type text code test_project'                 Validation check passed [3.82s]
+08. PASS   'press enter'                                 Validation check passed [3.88s]
+09. PASS   'switch window code'                          Validation check passed [3.17s]
+10. FAIL   'list files Documents/projects'               Validation check failed [2.12s]
 --------------------------------------------------------------------------------
-RESULT COUNTS
---------------------------------------------------------------------------------
-NOCHECK     : 1
-PASS        : 6
+RESULT COUNTS: PASS: 9 | FAIL: 1 | TOTAL: 10
 ================================================================================
