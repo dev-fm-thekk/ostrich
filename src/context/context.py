@@ -3,9 +3,7 @@ import gi
 
 gi.require_version("Atspi", "2.0")
 
-from gi.repository import Atspi
-
-desktop = Atspi.get_desktop(0)
+from gi.repository import Atspi, GLib
 
 app_dirs = [
     Path("/usr/share/applications"),
@@ -62,3 +60,43 @@ def get_running_windows():
     return windows
 
 
+def get_ui_tree(app, limit, iter=0, _path=()):
+    """
+    Depth-limited recursive walk of an AT-SPI accessible tree.
+
+    app   : Atspi.Accessible to start from (the app object, or any node)
+    limit : max depth to descend (0 = only `app` itself, 1 = + its children, ...)
+    iter  : current depth (leave at 0 when calling)
+    _path : internal, child-index path from the starting node
+
+    Returns a flat list of dicts: {"name", "description", "path"}
+    where path is a "/"-joined string of child indices, e.g. "0/2/1"
+    ("" for the starting node itself).
+    """
+    if app is None or iter > limit:
+        return []
+
+    try:
+        element = {
+            "name": app.get_name() or "",
+            "description": app.get_description() or "",
+            "path": "/".join(map(str, _path)),
+        }
+        count = app.get_child_count()
+    except GLib.Error:
+        # node vanished or the app stopped responding
+        return []
+
+    results = [element]
+
+    if iter == limit:
+        return results
+
+    for i in range(count):
+        try:
+            child = app.get_child_at_index(i)
+        except GLib.Error:
+            continue
+        results.extend(get_ui_tree(child, limit, iter + 1, _path + (i,)))
+
+    return results
