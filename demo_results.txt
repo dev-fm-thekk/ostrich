@@ -2,11 +2,11 @@
 ================================================================================
 OSTRICHFLOW DEMO SUMMARY
 ================================================================================
-01. PASS      'create a new tab'                            tab count increases by one | before={'count': 2, 'selected': 1} | after={'count': 3, 'selected': 3} [24.98s]
-02. PASS      'switch to the first terminal tab'            first tab selected | before={'count': 3, 'selected': 3} | after={'count': 3, 'selected': 1} [20.67s]
-03. PASS      'switch to the second terminal tab'           second tab selected | before={'count': 3, 'selected': 1} | after={'count': 3, 'selected': 2} [20.48s]
-04. PASS      'switch to the first terminal tab'            back on tab 1 | before={'count': 3, 'selected': 2} | after={'count': 3, 'selected': 1} [22.83s]
-05. NOCHECK   'minimize this terminal window'               Could not capture UI state [21.56s]
+01. PASS      'create a new tab'                            tab count increases by one | before={'count': 2, 'selected': 1} | after={'count': 3, 'selected': 3} [22.75s]
+02. PASS      'switch to the first terminal tab'            first tab selected | before={'count': 3, 'selected': 3} | after={'count': 3, 'selected': 1} [21.06s]
+03. PASS      'switch to the second terminal tab'           second tab selected | before={'count': 3, 'selected': 1} | after={'count': 3, 'selected': 2} [20.26s]
+04. PASS      'switch to the first terminal tab'            back on tab 1 | before={'count': 3, 'selected': 2} | after={'count': 3, 'selected': 1} [20.51s]
+05. NOCHECK   'minimize this terminal window'               Could not capture UI state [21.73s]
 
 --------------------------------------------------------------------------------
 RESULT COUNTS

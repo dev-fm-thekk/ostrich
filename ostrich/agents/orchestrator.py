@@ -164,7 +164,7 @@ SYSTEM_PROMPT = """
 class Agent:
     def __init__(self):
         self.state = AgentState()
-        self.client = OpenAI(base_url="http://localhost:8080/v1", api_key="not-needed")
+        self.client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="not-needed")
         self.nav = NavAgent(self.client)
         self.system_agent = get_system_agent()
 
