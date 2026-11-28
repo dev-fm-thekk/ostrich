@@ -4,6 +4,7 @@ import gi
 gi.require_version("Atspi", "2.0")
 
 from gi.repository import Atspi, GLib
+import subprocess
 
 app_dirs = [
     Path("/usr/share/applications"),
@@ -12,6 +13,7 @@ app_dirs = [
     Path.home() / ".local/share/flatpak/exports/share/applications",
     Path("/var/lib/snapd/desktop/applications"),
 ]
+
 
 def get_app_aliases(filter=None):
     aliases = []
@@ -30,6 +32,7 @@ def get_app_aliases(filter=None):
 
     return filtered
 
+
 WINDOW_ROLES = {
     Atspi.Role.FRAME,
     Atspi.Role.WINDOW,
@@ -37,7 +40,8 @@ WINDOW_ROLES = {
     Atspi.Role.ALERT,
 }
 
-def get_running_windows():
+
+def list_windows_atspi():
     windows = []
     desktop = Atspi.get_desktop(0)
     for i in range(desktop.get_child_count()):
@@ -49,16 +53,50 @@ def get_running_windows():
             if win is None or win.get_role() not in WINDOW_ROLES:
                 continue
             s = win.get_state_set()
-            windows.append({
-                "app": app.get_name(),
-                "title": win.get_name(),
-                "pid": app.get_process_id(),
-                "active": s.contains(Atspi.StateType.ACTIVE),
-                "minimized": s.contains(Atspi.StateType.ICONIFIED),
-                "showing": s.contains(Atspi.StateType.SHOWING),
-            })  
+            windows.append(
+                {
+                    "app": app.get_name(),
+                    "title": win.get_name(),
+                    "pid": app.get_process_id(),
+                    "active": s.contains(Atspi.StateType.ACTIVE),
+                    "minimized": s.contains(Atspi.StateType.ICONIFIED),
+                    "showing": s.contains(Atspi.StateType.SHOWING),
+                }
+            )
     return windows
 
+
+def list_windows_gdbus():
+    cmd = [
+        "gdbus",
+        "call",
+        "--session",
+        "--dest",
+        "org.gnome.Shell",
+        "--object-path",
+        "/org/gnome/Shell/Extensions/Windows",
+        "--method",
+        "org.gnome.Shell.Extensions.Windows.List",
+    ]
+
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        return res.returncode == 0, res.stdout.strip(), res.stderr.strip()
+    except FileNotFoundError:
+            return False, "", "gdbus executable not found."
+    except subprocess.TimeoutExpired:
+        return False, "", "gdbus call timed out."
+    except OSError as e:
+        return False, "", str(e)
+
+def list_windows(format="atspi"):
+    if format == "atspi":
+        return list_windows_atspi()
+    elif format == "gdbus":
+        return list_windows_gdbus()
+    else:
+        return "format not found"
+    
 
 def get_ui_tree(app, limit, iter=0, _path=()):
     """
